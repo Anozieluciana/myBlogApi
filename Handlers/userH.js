@@ -1,21 +1,35 @@
 const userModel = require("../Models/userM")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
+// const auth = require("../Handlers/Auth")
+const { FieldRequiredError, AlreadyTakenError } = require("../ErrorGuide/customError")
 
-const createUser = async(req,res)=>{
+const createUser = async(req,res,next)=>{
     try{
         const {name, email, password} = req.body
+     
+        if (!username) throw new FieldRequiredError(`A username`);
+        if (!email) throw new FieldRequiredError(`An email`);
+        if (!password) throw new FieldRequiredError(`A password`);
+    
+        const userExists = await User.findOne({
+          where: { email: req.body.email },
+        });
+        if (userExists) throw new AlreadyTakenError("Email", "try logging in");
+
         const salt = await bcrypt.genSalt(8)
         const hashed = await bcrypt.hash(password,salt)
+
         const thisUser = await userModel.create({
-            name,
-            email,
+            name:name,
+            email: email,
             password:hashed
         })
+        console.log(req.body.user)
         res.status(200).json({status:"success", data:thisUser})
     }
     catch(error){
-        res.status(500).json({message:error.message})
+        next(error);
     }
 }
 
@@ -33,7 +47,6 @@ const signInUser = async(req,res)=>{
                     expiresIn:process.env.DAYS
                 })
                 const {password, ...info} = thisUser._doc
-                // const data = user._docs
 
                 res.status(200).json({
                     status:"user has successfully signin",
