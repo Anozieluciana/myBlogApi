@@ -27,8 +27,8 @@ class unauthorizedError extends thisError {
 }
 
 class FieldRequiredError extends thisError{
-    constructor(field){
-        super(`${field} is required`)
+    constructor(message){
+        super(`${message} is required`)
     }
 }
 class ValidationError extends thisError{

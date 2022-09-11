@@ -1,6 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const { createUser, signInUser, getAllUsers, getUser, updateUser, deleteUser } = require("../Handlers/userH")
+const Auth = require ("../Handlers/Auth")
 
 router
     .route("/").post(createUser).get(getAllUsers)
@@ -10,8 +11,8 @@ router
 
 router
     .route("/user:_id")
-    .get(getUser)
-    .patch(updateUser)
+    .get(Auth,getUser)
+    .patch(Auth,updateUser)
     .delete(deleteUser)
 
 

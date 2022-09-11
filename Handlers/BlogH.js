@@ -1,11 +1,13 @@
 const userModel = require("../Models/userM")
 const blogModel = require("../Models/BlogM")
 const  Mongoose  = require("mongoose")
+const { unauthorizedError } = require("../ErrorGuide/customError")
 
 
 const createBlog = async(req, res)=>{
     try{
         const isUser = await userModel.findById(req.params.id)
+        if(!isUser) throw new unauthorizedError();
         const isBlogger = await new blogModel(req.body)
 
         isBlogger.user = isUser
